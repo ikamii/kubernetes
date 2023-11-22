@@ -1,0 +1,31 @@
+---
+- name: Install k3s
+  hosts: local
+  gather_facts: false
+  become: true
+  vars:
+    kubeconfig: false
+  tasks:
+    - name: Install required packages
+      apt:
+        name:
+          - curl
+        state: present
+
+    - name: Download k3s installation script
+      get_url:
+        url: "https://get.k3s.io"
+        dest: ./k3s-install.sh
+        mode: "0755"
+
+    - name: Run k3s installation script
+      shell: bash k3s-install.sh
+
+    - name: Delete k3s installation script
+      file:
+        path: ./k3s-install.sh
+        state: absent
+
+- name: CONFIG
+  import_playbook: "configuration/config.yaml"
+  when: kubeconfig | default(false) | bool == true

@@ -1,0 +1,34 @@
+---
+- name: Configuration
+  hosts: local
+  gather_facts: false
+  become: false
+  vars:
+    kubeconfig: false
+  tasks:
+    - name: CONFIG
+      block:
+        
+        - name: Check config file
+          stat:
+            path: /home/$USER/.kube/config
+          register: config
+
+        - name: If no config -> Create
+          shell: bash config.sh
+          when: not config.stat.exists
+
+        - name: Config found
+          pause:
+            prompt: "Config file already exists. Do you want to create new one? (y/n)"
+          register: new_config
+          when: config.stat.exists
+
+        - name: Set new configuration
+          shell: bash config.sh
+          when: new_config.user_input == "y"
+        
+        - name: WARNING
+          debug:
+            msg: "Please restart the terminal to apply changes!"
+        
