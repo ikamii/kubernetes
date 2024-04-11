@@ -1,0 +1,25 @@
+---
+- name: Converge
+  hosts: instance
+  gather_facts: false
+  tasks:
+
+    - name: Install Python for Ansible
+      raw: test -e /usr/bin/python || (apt -y update && apt install -y python3)
+      changed_when: false
+      
+    - name: Update apt cache. (Ubuntu)
+      ansible.builtin.apt:
+        update_cache: yes
+      changed_when: false
+
+    - name: Install Nginx. (Ubuntu)
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+
+    - name: Ensure Nginx is running and enabled. (Ubuntu)
+      ansible.builtin.service:
+        name: nginx
+        state: started
+        enabled: yes

@@ -1,0 +1,8 @@
+---
+driver:
+  name: docker
+platforms:
+  - name: instance
+    # image: molecule-custom-ubuntu
+    image: ubuntu:20.04
+    pre_build_image: true
